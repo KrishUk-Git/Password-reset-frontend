@@ -13,7 +13,6 @@ function ResetPassword() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Validate the token when the component mounts
     const validateToken = async () => {
       try {
         await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/reset-password/${token}`);
@@ -39,7 +38,7 @@ function ResetPassword() {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/reset-password/${token}`, { password });
       setMessage(response.data.message + " You will be redirected shortly.");
       setTimeout(() => {
-        navigate('/login'); // Or to your login page
+        navigate('/login'); 
       }, 3000);
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred.');
