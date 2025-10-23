@@ -19,7 +19,10 @@ const ResetPassword = () => {
     setError('');
     setMessage('');
     try {
-      const { data } = await axios.post(`/api/auth/reset-password/${token}`, { password });
+      // --- UPDATE IS HERE ---
+      const apiUrl = process.env.REACT_APP_API_URL;
+      const { data } = await axios.post(`${apiUrl}/api/auth/reset-password/${token}`, { password });
+
       setMessage(data.message + " Redirecting...");
       setTimeout(() => navigate('/register'), 3000);
     } catch (err) {
