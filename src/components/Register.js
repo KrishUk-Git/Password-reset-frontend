@@ -3,27 +3,32 @@ import axios from 'axios';
 import { Form, Button, Card, Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-const ForgotPassword = () => {
+const Register = () => {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage('');
+    if (password !== confirmPassword) {
+      return setError('Passwords do not match.');
+    }
     setError('');
+    setMessage('');
     try {
-      const { data } = await axios.post('/api/auth/forgot-password', { email });
+      const { data } = await axios.post('/api/auth/register', { email, password });
       setMessage(data.message);
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      setError(err.response?.data?.message || 'Failed to register.');
     }
   };
 
   return (
     <Card style={{ maxWidth: '400px', margin: 'auto' }}>
       <Card.Body>
-        <h2 className="text-center mb-4">Forgot Password</h2>
+        <h2 className="text-center mb-4">Register</h2>
         {message && <Alert variant="success">{message}</Alert>}
         {error && <Alert variant="danger">{error}</Alert>}
         <Form onSubmit={handleSubmit}>
@@ -31,16 +36,24 @@ const ForgotPassword = () => {
             <Form.Label>Email</Form.Label>
             <Form.Control type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           </Form.Group>
+          <Form.Group className="mt-2" id="password">
+            <Form.Label>Password</Form.Label>
+            <Form.Control type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          </Form.Group>
+          <Form.Group className="mt-2" id="confirmPassword">
+            <Form.Label>Confirm Password</Form.Label>
+            <Form.Control type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+          </Form.Group>
           <Button className="w-100 mt-3" type="submit">
-            Get Reset Link
+            Register
           </Button>
         </Form>
         <div className="w-100 text-center mt-3">
-          <Link to="/register">Back to Register</Link>
+          <Link to="/forgot-password">Forgot Password?</Link>
         </div>
       </Card.Body>
     </Card>
   );
 };
 
-export default ForgotPassword;
+export default Register;

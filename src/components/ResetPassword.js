@@ -1,93 +1,54 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { Form, Button, Card, Alert } from 'react-bootstrap';
 
-function ResetPassword() {
+const ResetPassword = () => {
+  const { token } = useParams();
+  const navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const [isValidToken, setIsValidToken] = useState(false);
-  
-  const { token } = useParams();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const validateToken = async () => {
-      try {
-        await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/reset-password/${token}`);
-        setIsValidToken(true);
-      } catch (err) {
-        setError('Invalid or expired password reset link.');
-        setIsValidToken(false);
-      }
-    };
-    validateToken();
-  }, [token]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage('');
-    setError('');
-
     if (password !== confirmPassword) {
       return setError('Passwords do not match.');
     }
-
+    setError('');
+    setMessage('');
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/reset-password/${token}`, { password });
-      setMessage(response.data.message + " You will be redirected shortly.");
-      setTimeout(() => {
-        navigate('/login'); 
-      }, 3000);
+      const { data } = await axios.post(`/api/auth/reset-password/${token}`, { password });
+      setMessage(data.message + " Redirecting...");
+      setTimeout(() => navigate('/register'), 3000);
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred.');
+      setError(err.response?.data?.message || 'Failed to reset password.');
     }
   };
 
-  if (!isValidToken) {
-    return (
-        <div className="auth-form">
-            <h3 className="text-center mb-4">Reset Password</h3>
-            {error && <div className="alert alert-danger">{error}</div>}
-        </div>
-    );
-  }
-
   return (
-    <div className="auth-form">
-      <h3 className="text-center mb-4">Reset Password</h3>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="password">New Password</label>
-          <input
-            type="password"
-            className="form-control"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="confirmPassword">Confirm New Password</label>
-          <input
-            type="password"
-            className="form-control"
-            id="confirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-        </div>
-        
-        {message && <div className="alert alert-success">{message}</div>}
-        {error && <div className="alert alert-danger">{error}</div>}
-
-        <button type="submit" className="btn btn-primary w-100">Reset Password</button>
-      </form>
-    </div>
+    <Card style={{ maxWidth: '400px', margin: 'auto' }}>
+      <Card.Body>
+        <h2 className="text-center mb-4">Reset Password</h2>
+        {message && <Alert variant="success">{message}</Alert>}
+        {error && <Alert variant="danger">{error}</Alert>}
+        <Form onSubmit={handleSubmit}>
+          <Form.Group id="password">
+            <Form.Label>New Password</Form.Label>
+            <Form.Control type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          </Form.Group>
+          <Form.Group className="mt-2" id="confirmPassword">
+            <Form.Label>Confirm New Password</Form.Label>
+            <Form.Control type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+          </Form.Group>
+          <Button className="w-100 mt-3" type="submit">
+            Update Password
+          </Button>
+        </Form>
+      </Card.Body>
+    </Card>
   );
-}
+};
 
 export default ResetPassword;

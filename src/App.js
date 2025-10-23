@@ -1,18 +1,20 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
+import { Container } from 'react-bootstrap';
+import Register from './components/Register';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
-import './App.css';
 
 function App() {
   return (
-    <div className="auth-container">
+    <Container className="mt-5">
       <Routes>
-        <Route path="/" element={<ForgotPassword />} />
+        <Route path="/" element={<Navigate to="/register" />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
       </Routes>
-    </div>
+    </Container>
   );
 }
 
