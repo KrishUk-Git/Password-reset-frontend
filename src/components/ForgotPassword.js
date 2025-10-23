@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Form, Button, Card, Alert } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -13,9 +12,7 @@ const ForgotPassword = () => {
     setMessage('');
     setError('');
     try {
-      const apiUrl = process.env.REACT_APP_API_URL;
-      const { data } = await axios.post(`${apiUrl}/api/auth/forgot-password`, { email });
-
+      const { data } = await axios.post('/api/auth/forgot-password', { email });
       setMessage(data.message);
     } catch (err) {
       setError('An error occurred. Please try again.');
@@ -37,12 +34,8 @@ const ForgotPassword = () => {
             Get Reset Link
           </Button>
         </Form>
-        <div className="w-100 text-center mt-3">
-          <Link to="/register">Back to Register</Link>
-        </div>
       </Card.Body>
     </Card>
   );
 };
-
 export default ForgotPassword;
