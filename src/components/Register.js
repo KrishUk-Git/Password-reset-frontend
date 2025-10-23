@@ -18,9 +18,6 @@ const Register = () => {
     setError('');
     setMessage('');
     try {
-      // --- UPDATE IS HERE ---
-      // We construct the full URL for the API request.
-      // This allows the deployed app to find your backend.
       const apiUrl = process.env.REACT_APP_API_URL;
       const { data } = await axios.post(`${apiUrl}/api/auth/register`, { email, password });
       

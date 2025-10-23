@@ -13,7 +13,6 @@ const ForgotPassword = () => {
     setMessage('');
     setError('');
     try {
-      // --- UPDATE IS HERE ---
       const apiUrl = process.env.REACT_APP_API_URL;
       const { data } = await axios.post(`${apiUrl}/api/auth/forgot-password`, { email });
 
